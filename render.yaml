@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: trustlens-api
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    region: oregon
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: LLM_PROVIDER
+        value: groq
+      - key: CORS_ORIGINS
+        value: "https://trustlens.vercel.app"

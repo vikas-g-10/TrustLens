@@ -25,7 +25,25 @@ function unavailable(claim: string, url: string, reason: string): InvestigationR
     aiNote: 'AI reasoning was unavailable because the investigation service could not be reached.',
     model: null,
     generatedAt: new Date().toISOString(),
+    serviceError: reason,
   };
+}
+
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+
+export function getApiBaseUrl(): string {
+  return API_BASE_URL;
+}
+
+export async function checkBackendHealth(): Promise<{ ok: boolean; version?: string; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/health`);
+    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
+    const data = await res.json();
+    return { ok: true, version: data.version };
+  } catch (err: any) {
+    return { ok: false, error: err.message };
+  }
 }
 
 /** Runs a live investigation. Never throws: failures become a transparent INCONCLUSIVE result. */
@@ -54,7 +72,7 @@ export async function runInvestigation(claim: string, url: string, file?: File |
       };
     }
 
-    const res = await fetch('/api/investigate', fetchOptions);
+    const res = await fetch(`${API_BASE_URL}/api/investigate`, fetchOptions);
     const body = await res.json().catch(() => null);
     if (!res.ok || !body || !body.final) {
       return unavailable(claim, url, body?.error || `HTTP ${res.status}`);
@@ -76,7 +94,7 @@ export async function analyzeImage(file: File): Promise<ImageAnalysisResponse> {
   const timer = setTimeout(() => controller.abort(), IMAGE_UPLOAD_TIMEOUT_MS);
 
   try {
-    const res = await fetch('/api/analyze-image?include_ai=true', {
+    const res = await fetch(`${API_BASE_URL}/api/analyze-image?include_ai=true`, {
       method: 'POST',
       // Notice: Do NOT set Content-Type header; browser must set multipart/form-data with its boundary
       body: formData,

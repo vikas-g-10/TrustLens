@@ -51,7 +51,7 @@ class FusionEngine:
 
         # Authenticity needs *independent physical provenance* (camera EXIF). A vision model's
         # opinion or web articles about the user's claim cannot establish that an image is real.
-        has_media = any(it.evidence_type in ("FILE_INTEGRITY", "MULTIMODAL_VISION") for it in items)
+        has_media = any(it.evidence_type in ("FILE_INTEGRITY", "MULTIMODAL_VISION", "VIDEO_METADATA", "VIDEO_FRAME") for it in items)
         strength_auth_physical = sum(
             it.weight for it in items
             if it.target_hypothesis == "AUTHENTIC" and it.independence_group == "exif_metadata"

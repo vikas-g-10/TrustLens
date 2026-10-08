@@ -104,7 +104,7 @@ export interface NormalizedEvidenceItem {
   evidenceId: string;
   evidenceType: string;
   description: string;
-  direction: 'SUPPORTS' | 'CONTRADICTS' | 'NEUTRAL';
+  direction: 'SUPPORTS' | 'CONTRADICTS' | 'NEUTRAL' | ImageTextRelationship;
   targetHypothesis: string;
   reliability: number;
   quality: number;
@@ -118,6 +118,27 @@ export interface NormalizedEvidenceItem {
 
 import type { MultimodalAiResult } from './imageAnalysis';
 
+export type ImageTextRelationship =
+  | 'SUPPORTS'
+  | 'CONTRADICTS'
+  | 'PARTIALLY_SUPPORTS'
+  | 'UNRELATED'
+  | 'INSUFFICIENT_TEXT';
+
+/** Mirrors backend ImageTextEvidence: how text inside the image relates to the claim. */
+export interface ImageTextEvidence {
+  extractedText: string;
+  relevantText: string;
+  relationship: ImageTextRelationship;
+  matchedClaimPoints: string[];
+  contradictedClaimPoints: string[];
+  missingClaimPoints: string[];
+  explanation: string;
+  /** 0.0 - 1.0 */
+  ocrQuality: number;
+  source: string;
+}
+
 export interface InvestigationResponse {
   claim: string;
   inputUrl: string | null;
@@ -130,12 +151,15 @@ export interface InvestigationResponse {
   model: string | null;
   generatedAt: string;
   searchEvidence?: any;
-  mediaAnalysis?: any;
+  mediaAnalysis?: any; // image: imageAnalysis; Phase 8 video: { mediaType: 'video', videoAnalysis: VideoAnalysisResult }
   multimodalAnalysis?: MultimodalAiResult | null;
   trustTriangle?: TrustTriangle;
   evidenceSummary?: EvidenceSummary;
   conflict?: ConflictReport;
   normalizedEvidence?: NormalizedEvidenceItem[];
+  imageTextEvidence?: ImageTextEvidence | null;
+  /** Set client-side ONLY when the request itself failed (no backend result exists). */
+  serviceError?: string;
 }
 
 

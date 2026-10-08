@@ -194,6 +194,7 @@ class MediaAnalysis(CamelModel):
     forensic_notes: List[str] = Field(default_factory=list)
     image_analysis: Optional[Any] = None
     multimodal_ai: Optional[MultimodalAiResult] = None
+    video_analysis: Optional[Any] = None  # Phase 8: VideoAnalysisResult dumped by_alias (same pattern as image_analysis)
 
 
 class Claim(CamelModel):

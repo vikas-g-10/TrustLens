@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Header } from './components/Header';
 import { LandingHero } from './components/LandingHero';
 import { PipelineAnimation } from './components/PipelineAnimation';
@@ -15,16 +15,23 @@ import { EvidenceGraph } from './components/EvidenceGraph';
 import { ExplainableReasoning } from './components/ExplainableReasoning';
 import { EvidenceTimeline } from './components/EvidenceTimeline';
 import { ReportModal } from './components/ReportModal';
+import { LiveEvidencePanels, StatusNotices } from './components/LiveEvidencePanels';
 import { MediaInspectionModal } from './components/MediaInspectionModal';
+import ShortsAnalyzer from './pages/ShortsDemo';
 import { DEMO_CASE, INITIAL_PIPELINE_STAGES, LIVE_PIPELINE_STAGES } from './data/demoCase';
 import { buildLiveInvestigation } from './data/buildLiveInvestigation';
 import { runInvestigation } from './services/investigationApi';
 import { InvestigationData } from './types/investigation';
 
-type AppState = 'landing' | 'pipeline' | 'results';
+type AppState = 'landing' | 'pipeline' | 'results' | 'shorts';
+
+// Shorts Analyzer lives inside this app. Deep link: #shorts-analyzer (legacy /shorts-demo still opens it).
+const SHORTS_HASH = '#shorts-analyzer';
+const wantsShorts = () =>
+  window.location.hash === SHORTS_HASH || window.location.pathname.replace(/\/+$/, '') === '/shorts-demo';
 
 export default function App() {
-  const [appState, setAppState] = useState<AppState>('landing');
+  const [appState, setAppState] = useState<AppState>(() => (wantsShorts() ? 'shorts' : 'landing'));
   const [claim, setClaim] = useState<string>('');
   const [mediaName, setMediaName] = useState<string>('');
   const [url, setUrl] = useState<string>('');
@@ -38,6 +45,25 @@ export default function App() {
   // Modals
   const [isReportOpen, setIsReportOpen] = useState<boolean>(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState<boolean>(false);
+
+  // Keep the Shorts Analyzer view in sync with browser back/forward and hash links.
+  useEffect(() => {
+    const sync = () => setAppState((s) => (wantsShorts() ? 'shorts' : s === 'shorts' ? 'landing' : s));
+    window.addEventListener('hashchange', sync);
+    window.addEventListener('popstate', sync);
+    return () => {
+      window.removeEventListener('hashchange', sync);
+      window.removeEventListener('popstate', sync);
+    };
+  }, []);
+
+  const handleOpenShorts = () => {
+    requestId.current++; // discard any pending investigation result
+    if (window.location.pathname !== '/') window.history.replaceState(null, '', '/');
+    window.location.hash = SHORTS_HASH;
+    setAppState('shorts');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // User clicks "TRY DEMO CASE"
   const handlePopulateDemo = () => {
@@ -96,6 +122,7 @@ export default function App() {
   // Reset back to landing
   const handleReset = () => {
     requestId.current++;
+    if (wantsShorts()) window.history.replaceState(null, '', '/');
     setAppState('landing');
     setClaim('');
     setMediaName('');
@@ -122,10 +149,14 @@ export default function App() {
         onOpenReport={() => setIsReportOpen(true)}
         hasActiveCase={appState === 'results'}
         onNavigateSection={handleNavigateSection}
+        onOpenShorts={handleOpenShorts}
+        isShortsActive={appState === 'shorts'}
       />
 
       {/* Main Content Areas */}
       <main className="flex-1">
+        {appState === 'shorts' && <ShortsAnalyzer />}
+
         {appState === 'landing' && (
           <LandingHero
             claim={claim}
@@ -155,6 +186,11 @@ export default function App() {
             {/* The Paradigm Banner & Investigation Sequence Flow (Requirements 2 & 10) */}
             <InvestigationSequenceFlow />
 
+            {/* Live runs only: honest backend/search/provider status notices */}
+            {investigationData.live && !investigationData.isDemo && (
+              <StatusNotices live={investigationData.live} />
+            )}
+
             {/* Primary Verdict Banner */}
             <VerdictBanner
               data={investigationData}
@@ -169,6 +205,11 @@ export default function App() {
               isDemo={investigationData.isDemo}
               onInspectMedia={investigationData.isDemo ? () => setIsMediaModalOpen(true) : undefined}
             />
+
+            {/* Live runs only: image text, web source reliability, evidence provenance (real backend data) */}
+            {investigationData.live && !investigationData.isDemo && (
+              <LiveEvidencePanels live={investigationData.live} />
+            )}
 
             {/* Dialectical Evidence Battle */}
             <EvidenceBattle

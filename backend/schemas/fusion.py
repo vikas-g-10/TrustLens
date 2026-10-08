@@ -36,7 +36,10 @@ EvidenceType = Literal[
     "MULTIMODAL_VISION",
     "WEB_SOURCE",
     "URL_SECURITY",
-    "CORROBORATING_REPORT"
+    "CORROBORATING_REPORT",
+    # Phase 8 video evidence (always sourced from uploaded video / its sampled frames)
+    "VIDEO_METADATA",
+    "VIDEO_FRAME",
 ]
 
 ConflictSeverity = Literal["NONE", "LOW", "MEDIUM", "HIGH"]

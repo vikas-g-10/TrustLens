@@ -144,7 +144,7 @@ export const ExplainableReasoning: React.FC<ExplainableReasoningProps> = ({
           </p>
           {isDemo && (
             <div className="pt-2 border-t border-rose-900/30 text-[11px] font-mono text-slate-400">
-              (Simulated) Fails calendar anchor verification despite optical authenticity.
+              (Simulated) Fails calendar anchor verification; the demo does not establish that the footage itself is authentic.
             </div>
           )}
         </div>
@@ -160,7 +160,7 @@ export const ExplainableReasoning: React.FC<ExplainableReasoningProps> = ({
           </p>
           {isDemo && (
             <div className="pt-2 border-t border-sky-900/30 text-[11px] font-mono text-slate-400">
-              (Simulated) Zero synthetic deepfake artifacts; non-malicious provenance repurpose.
+              (SIMULATED DEMO SIGNAL — not implemented forensic analysis) TrustLens does not implement deepfake detection; the provenance-repurpose scenario is illustrative.
             </div>
           )}
         </div>

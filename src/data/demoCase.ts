@@ -11,9 +11,9 @@ export const INITIAL_PIPELINE_STAGES: PipelineStage[] = [
   {
     id: 'media_forensics',
     label: 'MEDIA FORENSICS',
-    subtext: 'Scanning pixel continuity, compression artifacts, and generative deepfake markers',
+    subtext: 'SIMULATED DEMO: illustrative pixel-continuity, compression and metadata findings',
     status: 'pending',
-    telemetryLog: 'Sensor PRNU: Native CMOS camera optics. EXIF creation date: STRIPPED. No generative AI seams.'
+    telemetryLog: 'SIMULATED DEMO SIGNAL — not implemented forensic analysis. Illustrative EXIF creation date: STRIPPED.'
   },
   {
     id: 'url_security',
@@ -115,16 +115,16 @@ export const DEMO_CASE: InvestigationData = {
         }
       ],
       details: {
-        overview: "Frame-by-frame analysis reveals no deepfake generation or generative splice boundaries. However, crucial metadata containers were purged upon re-encoding.",
+        overview: "SIMULATED DEMO SIGNAL — not implemented forensic analysis. This demo illustrates a report layout; TrustLens does not implement deepfake detection. Illustrative scenario: crucial metadata containers were purged upon re-encoding.",
         metrics: [
-          { label: "Generative AI Likelihood", value: "< 4.1%" },
+          { label: "Generative AI Likelihood (SIMULATED DEMO SIGNAL)", value: "Illustrative only" },
           { label: "Compression Generation", value: "3rd generation re-encode" },
           { label: "EXIF Timestamp", value: "Null / Stripped" },
           { label: "Color Grading Consistency", value: "98.7% (Natural daylight)" }
         ],
         forensicNotes: [
-          "No boundary discontinuity or warping detected around moving vehicles and reflections.",
-          "Audio track lacks ambient stereo phase cues, indicating non-original or re-dubbed soundtrack.",
+          "SIMULATED DEMO SIGNAL — not implemented forensic analysis: boundary-discontinuity and warping checks are illustrative only.",
+          "SIMULATED DEMO SIGNAL — not implemented forensic analysis: TrustLens does not analyze audio tracks.",
           "Visual topography matches Bellandur / Outer Ring Road sector, but landmarks lack temporal markers."
         ],
         technicalDisclaimer: "Optical forensics verify visual continuity but cannot establish the real-world calendar date of optical exposure."

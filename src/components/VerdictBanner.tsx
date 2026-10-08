@@ -44,9 +44,12 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({
     return Math.min(100, Math.max(0, Math.round(val > 1 ? val : val * 100)));
   };
 
-  const manipVal = toPct(data.trustTriangle?.manipulationLikelihood);
-  const strengthVal = toPct(data.trustTriangle?.evidenceStrength);
-  const conflictVal = toPct(data.trustTriangle?.evidenceConflict);
+  // Backend Trust Triangle values are already 0-100: display them as-is (clamped for the bar only).
+  const asIs = (val: number | undefined | null) =>
+    val === undefined || val === null ? 0 : Math.min(100, Math.max(0, Math.round(val)));
+  const manipVal = asIs(data.trustTriangle?.manipulationLikelihood);
+  const strengthVal = asIs(data.trustTriangle?.evidenceStrength);
+  const conflictVal = asIs(data.trustTriangle?.evidenceConflict);
 
   return (
     <div id="investigation-overview" className={`relative overflow-hidden rounded-2xl border p-6 sm:p-8 shadow-2xl backdrop-blur-xl ${theme.panel}`}>
@@ -181,6 +184,13 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {!data.isDemo && !data.trustTriangle && (
+            <div className="w-full max-w-sm rounded-lg border border-slate-800/90 bg-slate-950/80 p-3.5 text-xs font-mono text-slate-400">
+              <span className="font-semibold text-cyan-400">TRUST TRIANGLE</span>
+              <span className="block mt-1">Unavailable: the backend returned no fusion result for this investigation.</span>
             </div>
           )}
 

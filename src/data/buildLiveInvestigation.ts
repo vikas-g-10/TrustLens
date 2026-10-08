@@ -8,6 +8,7 @@ import type {
   VerdictStatus,
 } from '../types/investigation';
 import type { InvestigationResponse } from '../types/analysis';
+import { videoForensicsCard } from './videoForensicsCard';
 
 type Item = AnalysisCardData['summaryItems'][number];
 
@@ -102,6 +103,7 @@ function urlSecurityCard(r: InvestigationResponse): AnalysisCardData {
 
 function mediaForensicsCard(r: InvestigationResponse): AnalysisCardData {
   const m = r.mediaAnalysis;
+  if (m?.mediaType === 'video') return videoForensicsCard(r); // Phase 8 (image path below unchanged)
   if (!m || !m.analyzed) {
     return {
       id: 'media_forensics',

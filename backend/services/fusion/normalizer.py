@@ -37,6 +37,7 @@ def normalize_all_evidence(
     search_evidence: Optional[SearchEvidence] = None,
     multimodal_result: Optional[MultimodalAiResult] = None,
     image_text_evidence: Optional[ImageTextEvidence] = None,
+    video_analysis: Optional[Any] = None,
 ) -> List[NormalizedEvidenceItem]:
     """
     Normalizes all ingested telemetry into discrete NormalizedEvidenceItem objects.
@@ -558,5 +559,12 @@ def normalize_all_evidence(
                     limitations=["A failed URL retrieval is not evidence that the site is fraudulent or genuine."],
                 )
             )
+
+    # =========================================================================
+    # 6. Video evidence (Phase 8): representative-frame evidence, normalized separately
+    # =========================================================================
+    if video_analysis is not None:
+        from backend.services.fusion.video_normalizer import normalize_video_evidence
+        items.extend(normalize_video_evidence(video_analysis))
 
     return items

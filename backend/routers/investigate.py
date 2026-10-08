@@ -28,8 +28,19 @@ from backend.schemas.image_analysis import ImageAnalysisResponse
 from backend.services.multimodal import analyze_multimodal_image
 from backend.services.fusion import fuse_investigation_evidence
 from backend.config import settings
+from backend.services.video_analysis.analyzer import (
+    VideoAnalysisBundle,
+    add_multimodal_frame,
+    analyze_video_file,
+)
+from backend.services.video_analysis.probe import is_video_upload
 
 router = APIRouter(tags=["Investigation"])
+
+
+def _is_video_upload(upload) -> bool:
+    """Phase 8: route by extension / declared MIME type. Anything else keeps the image pipeline."""
+    return is_video_upload(getattr(upload, "filename", "") or "", getattr(upload, "content_type", "") or "")
 
 
 @router.post("/investigate", response_model=InvestigationResponse)
@@ -38,16 +49,18 @@ async def investigate_claim(
     _rate_limit: None = Depends(check_rate_limit),
 ):
     """
-    Phase 4 Digital Investigation Endpoint.
-    
-    Accepts claims, URLs, and optional image files (multipart/form-data or JSON).
+    Digital Investigation Endpoint (AIML prototype).
+
+    Accepts claims, URLs, and optional image or video files (multipart/form-data or JSON).
     Executes:
-    1. Phase 4 Genuine Image Forensics & Evidence Health (if image provided).
+    1. Image forensics & Evidence Health (if an image is provided), or video probing and
+       beginning/middle/end representative-frame analysis (if a video is provided).
     2. Real SSRF-protected URL inspection (if URL provided).
     3. Deterministic multi-query search retrieval with supporting & counter evidence (if claim provided).
     4. Source reliability scoring & heuristic independence clustering.
-    5. Preserves evidence provenance without fabricating data.
-    6. Keeps overall verdict transparently INCONCLUSIVE (fusion reserved for future phase).
+    5. Optional multimodal AI visual inspection, recorded as one weighted evidence input.
+    6. Phase 6 deterministic evidence fusion: FusionEngine is the sole author of the final verdict,
+       confidence, and reason. No LLM output can override them.
     """
     content_type = request.headers.get("content-type", "")
     claim_text = ""
@@ -56,6 +69,8 @@ async def investigate_claim(
     image_analysis_result: Optional[ImageAnalysisResponse] = None
     image_error_msg: Optional[str] = None
     file_bytes: Optional[bytes] = None
+    video_bundle: Optional[VideoAnalysisBundle] = None
+    video_error_msg: Optional[str] = None
 
     if "application/json" in content_type:
         try:
@@ -83,8 +98,19 @@ async def investigate_claim(
         except Exception:
             pass
 
+    # Phase 8: uploaded video (separate branch; the image branch below is unchanged)
+    if file_upload and _is_video_upload(file_upload):
+        file_bytes = await file_upload.read()
+        video_bundle = await analyze_video_file(
+            file_bytes,
+            file_upload.filename,
+            getattr(file_upload, "content_type", "") or "",
+            claim_text,
+        )
+        if not video_bundle.result.ok:
+            video_error_msg = video_bundle.result.error
     # Process uploaded image if present
-    if file_upload:
+    elif file_upload:
         try:
             file_bytes = await file_upload.read()
             if len(file_bytes) > 0:
@@ -98,12 +124,16 @@ async def investigate_claim(
         except Exception as exc:
             image_error_msg = f"Failed to analyze image: {str(exc)}"
 
+    video_result = video_bundle.result if video_bundle else None
+    video_ok = bool(video_result and video_result.ok)
     user_claim_text = claim_text  # the claim as typed by the user (before any placeholder is applied)
     if not claim_text and image_analysis_result:
         claim_text = f"Forensic analysis of {image_analysis_result.file.filename}"
+    elif not claim_text and video_ok:
+        claim_text = f"Forensic analysis of {video_result.metadata.filename}"
 
-    if not claim_text and not url_text and not image_analysis_result:
-        err_msg = image_error_msg or "A claim, URL, or image file is required."
+    if not claim_text and not url_text and not image_analysis_result and not video_ok:
+        err_msg = image_error_msg or video_error_msg or "A claim, URL, or image/video file is required."
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"error": err_msg, "detail": err_msg}
@@ -163,6 +193,10 @@ async def investigate_claim(
                 analyzed_at=now_iso,
             )
 
+    # Step 2.55: Phase 8 optional multimodal inspection of ONE representative video frame
+    if video_bundle and video_ok:
+        await add_multimodal_frame(video_bundle, claim_text, search_evidence)
+
     # Step 2.6: Image text -> claim evidence (reuses the Phase 4 OCR result; no second OCR)
     image_text_evidence = None
     if image_analysis_result and user_claim_text:
@@ -220,6 +254,34 @@ async def investigate_claim(
     elif image_error_msg:
         uncertainties.append(f"Uploaded media could not be analyzed: {image_error_msg}")
         reasoning_steps.append(f"Image analysis error: {image_error_msg}")
+
+    # Phase 8 video telemetry (evidence only; the verdict comes from Phase 6 fusion)
+    if video_result:
+        if video_ok:
+            vm = video_result.metadata
+            reasoning_steps.append(
+                f"Video analyzed: {vm.filename} ({vm.container or 'container unknown'}, "
+                f"{vm.width}x{vm.height}, {vm.duration_seconds}s, {vm.frame_rate} fps, {vm.frame_count} frames "
+                f"[{vm.frame_count_source or 'unknown'}]). {sum(1 for f in video_result.frames if f.decoded)}/"
+                f"{len(video_result.frames)} representative frame(s) decoded and analyzed."
+            )
+            for vf in video_result.frames:
+                if vf.decoded:
+                    reasoning_steps.append(
+                        f"Frame {vf.frame_index} (t={vf.timestamp_seconds}s, {vf.position}): Evidence Health "
+                        f"{vf.quality_score}/100; OCR {'text found' if vf.ocr_text.strip() else 'no text'}."
+                    )
+            if video_result.claim_comparison:
+                reasoning_steps.append(
+                    f"Video text vs claim: {video_result.claim_comparison.relationship}. "
+                    f"{video_result.claim_comparison.explanation}"
+                )
+        else:
+            uncertainties.append(f"Uploaded video could not be analyzed: {video_error_msg}")
+            reasoning_steps.append(f"Video analysis error: {video_error_msg}")
+        for lim in video_result.limitations:
+            if lim not in uncertainties:
+                uncertainties.append(lim)
 
     # URL Telemetry integration
     if url_text:
@@ -304,6 +366,7 @@ async def investigate_claim(
         search_evidence=search_evidence,
         multimodal_result=multimodal_result,
         image_text_evidence=image_text_evidence,
+        video_analysis=video_result,
     )
 
     # Collect additional normalized limitations
@@ -412,6 +475,31 @@ async def investigate_claim(
             forensic_notes=image_analysis_result.evidence_health.signals + image_analysis_result.evidence_health.notes[:1],
             image_analysis=image_analysis_result.model_dump(by_alias=True),
             multimodal_ai=multimodal_result,
+        )
+    elif video_result:
+        vm = video_result.metadata
+        ocr_qs = [f.ocr_quality for f in video_result.frames if f.decoded and f.ocr_available]
+        media_analysis = MediaAnalysis(
+            analyzed=video_ok,
+            media_name=vm.filename if vm else getattr(file_upload, "filename", "upload"),
+            media_type="video",
+            health=FileHealth(
+                filename=vm.filename,
+                size_bytes=vm.size_bytes,
+                mime_type=getattr(file_upload, "content_type", "") or "application/octet-stream",
+                sha256=vm.sha256,
+                is_supported=video_ok,
+                resolution=f"{vm.width}x{vm.height}" if vm.width and vm.height else None,
+                metadata_available=False,
+                ocr_quality_score=max(ocr_qs) if ocr_qs else None,
+                video_frame_count=vm.frame_count,
+                metadata_note="Container/stream facts were measured; EXIF does not apply to video frames.",
+            ) if vm else None,
+            forensic_notes=(
+                [f"Video status: {video_result.status}."] if video_ok
+                else [f"Failed video validation: {video_error_msg}"]
+            ) + [f"{c.name}: {c.status}" for c in video_result.capabilities if c.status == "UNAVAILABLE"][:4],
+            video_analysis=video_result.model_dump(by_alias=True),
         )
     elif image_error_msg:
         media_analysis = MediaAnalysis(

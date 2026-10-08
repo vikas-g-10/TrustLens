@@ -107,11 +107,11 @@ export const MediaInspectionModal: React.FC<MediaInspectionModalProps> = ({
                   {activeOverlay === 'optical_flow' && (
                     <div className="max-w-md mx-auto bg-slate-950/90 p-3 rounded-lg border border-cyan-500/40 text-xs font-mono text-cyan-300">
                       <div className="flex items-center justify-between pb-1 mb-1 border-b border-cyan-500/20 text-[10px]">
-                        <span>OPTICAL FLOW VECTORS: NOMINAL</span>
-                        <span>DIVERGENCE: 0.02</span>
+                        <span>OPTICAL FLOW: NOT IMPLEMENTED</span>
+                        <span>DEMO ONLY</span>
                       </div>
                       <p className="text-[11px] text-slate-300 font-sans">
-                        Fluid dynamics match natural laminar turbulent surface ripple. No generative diffusion seams or synthetic warping discovered.
+                        SIMULATED DEMO SIGNAL — not implemented forensic analysis. TrustLens does not implement optical-flow manipulation detection; this panel is an illustration and reports no measurement.
                       </p>
                     </div>
                   )}
@@ -119,11 +119,11 @@ export const MediaInspectionModal: React.FC<MediaInspectionModalProps> = ({
                   {activeOverlay === 'sensor_noise' && (
                     <div className="max-w-md mx-auto bg-slate-950/90 p-3 rounded-lg border border-emerald-500/40 text-xs font-mono text-emerald-300">
                       <div className="flex items-center justify-between pb-1 mb-1 border-b border-emerald-500/20 text-[10px]">
-                        <span>PRNU SENSOR PROFILE: PHYSICAL CMOS</span>
-                        <span>ISO: 400</span>
+                        <span>PRNU / SENSOR PROFILE: NOT IMPLEMENTED</span>
+                        <span>DEMO ONLY</span>
                       </div>
                       <p className="text-[11px] text-slate-300 font-sans">
-                        Consistent Bayer filter pixel crosstalk confirms authentic camera optics capture.
+                        SIMULATED DEMO SIGNAL — not implemented forensic analysis. TrustLens does not implement PRNU or camera-sensor profiling; this panel is an illustration and reports no measurement.
                       </p>
                     </div>
                   )}
@@ -189,7 +189,7 @@ export const MediaInspectionModal: React.FC<MediaInspectionModalProps> = ({
                       activeOverlay === 'optical_flow' ? 'bg-cyan-500/20 text-cyan-300 font-bold' : 'text-slate-400'
                     }`}
                   >
-                    Optical Flow
+                    Optical Flow (demo)
                   </button>
                   <button
                     onClick={() => setActiveOverlay('sensor_noise')}
@@ -197,7 +197,7 @@ export const MediaInspectionModal: React.FC<MediaInspectionModalProps> = ({
                       activeOverlay === 'sensor_noise' ? 'bg-emerald-500/20 text-emerald-300 font-bold' : 'text-slate-400'
                     }`}
                   >
-                    Sensor Noise
+                    Sensor Noise (demo)
                   </button>
                 </div>
               </div>
@@ -224,9 +224,9 @@ export const MediaInspectionModal: React.FC<MediaInspectionModalProps> = ({
 
             <div className="rounded-lg border border-slate-800 bg-slate-950 p-3 space-y-1">
               <span className="text-[10px] text-slate-500 block">AI GENERATIVE ARTIFACTS</span>
-              <span className="text-emerald-400 font-bold block">NEGATIVE (0.04)</span>
+              <span className="text-amber-400 font-bold block">SIMULATED DEMO SIGNAL</span>
               <p className="text-[11px] text-slate-400 font-sans">
-                Real camera sensor optics confirmed. The footage is genuine, but outdated.
+                Not implemented forensic analysis: TrustLens has no deepfake or AI-video detector and does not profile camera sensors. The demo scenario is illustrative only.
               </p>
             </div>
           </div>

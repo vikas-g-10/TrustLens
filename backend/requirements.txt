@@ -17,6 +17,10 @@ pillow>=12.0.0
 numpy>=2.0.0
 pytesseract>=0.3.13
 
+# Phase 8 Video Investigation (frame decode/extraction). ffprobe/ffmpeg on PATH is optional but
+# recommended: it supplies container/codec metadata; without it those fields are reported unavailable.
+opencv-python-headless>=4.8.0
+
 # Future Phase AIML Packages (Reserved for Phases 5-8)
 # groq>=0.13.0
 # pypdf>=5.1.0

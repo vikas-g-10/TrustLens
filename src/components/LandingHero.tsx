@@ -57,6 +57,9 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
   const [imageError, setImageError] = useState<string>('');
   const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
 
+  // Phase 8: video files go through INVESTIGATE (backend video pipeline), not the image-only analyzer.
+  const isVideoFile = (f: File | null) => !!f && (f.type.startsWith('video/') || /\.(mp4|mov|webm|avi)$/i.test(f.name));
+
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -66,7 +69,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
     const objectUrl = URL.createObjectURL(file);
     setImagePreviewUrl(objectUrl);
     if (!claim.trim()) {
-      setClaim(`Forensic image verification for ${file.name}`);
+      setClaim(`Forensic ${isVideoFile(file) ? 'video' : 'image'} verification for ${file.name}`);
     }
   };
 
@@ -226,7 +229,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
             {/* Video Tab Notice */}
             {activeTab === 'VIDEO' && !isDemoPopulated && (
               <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2.5 text-[11px] font-mono text-slate-400">
-                Video upload analysis is not available in Phase 4. Investigations use your claim and the submitted URL.
+                Video upload (MP4 · MOV · WebM · AVI) is supported: TrustLens checks file health and analyzes up to 3 representative frames (beginning, middle, end), including on-screen text compared with your claim. It does not detect deepfakes or AI-generated video, and a decodable video is not proof of authenticity. Choose your video in the IMAGE tab's upload area (it accepts video files), then click INVESTIGATE.
               </div>
             )}
 
@@ -238,14 +241,14 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
                     IMAGE FORENSIC UPLOAD (PHASE 4 REAL ENGINE)
                   </label>
                   <span className="text-[10px] font-mono text-slate-400">
-                    JPEG · PNG · WEBP (Max 10 MB)
+                    Images: JPEG · PNG · WEBP (10 MB) · Video: MP4 · MOV · WebM · AVI (30 MB)
                   </span>
                 </div>
 
                 <input
                   id="image-file-input"
                   type="file"
-                  accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                  accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm,video/x-msvideo,.jpg,.jpeg,.png,.webp,.mp4,.mov,.webm,.avi"
                   onChange={handleImageFileChange}
                   className="hidden"
                 />
@@ -267,7 +270,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
                   <div className="space-y-3">
                     <div className="flex items-center justify-between bg-slate-900/80 p-3 rounded-lg border border-slate-700">
                       <div className="flex items-center gap-3">
-                        {imagePreviewUrl ? (
+                        {imagePreviewUrl && !isVideoFile(selectedImageFile) ? (
                           <img
                             src={imagePreviewUrl}
                             alt="Upload preview"
@@ -287,7 +290,11 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
                       </div>
 
                       <div className="flex items-center gap-2">
-                        {!imageAnalysisResult && !isAnalyzingImage && (
+                        {isVideoFile(selectedImageFile) && (
+                          <span className="text-[10px] font-mono text-slate-400">Video is analyzed when you start the investigation</span>
+                        )}
+
+                        {!isVideoFile(selectedImageFile) && !imageAnalysisResult && !isAnalyzingImage && (
                           <button
                             type="button"
                             onClick={handleRunImageAnalysis}

@@ -1,18 +1,22 @@
 import React from 'react';
-import { ShieldAlert, Compass, FileText, RefreshCw } from 'lucide-react';
+import { ShieldAlert, Compass, FileText, RefreshCw, Film } from 'lucide-react';
 
 interface HeaderProps {
   onReset: () => void;
   onOpenReport?: () => void;
   hasActiveCase: boolean;
   onNavigateSection?: (sectionId: string) => void;
+  onOpenShorts?: () => void;
+  isShortsActive?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onReset,
   onOpenReport,
   hasActiveCase,
-  onNavigateSection
+  onNavigateSection,
+  onOpenShorts,
+  isShortsActive = false
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-[#070B12]/90 backdrop-blur-md">
@@ -69,10 +73,28 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Timeline
           </button>
+          <button
+            onClick={onOpenShorts}
+            aria-current={isShortsActive ? 'page' : undefined}
+            className={`flex items-center gap-1.5 whitespace-nowrap cursor-pointer transition-colors ${isShortsActive ? 'text-cyan-300' : 'hover:text-cyan-300'}`}
+          >
+            <Film className="h-3.5 w-3.5" />
+            Shorts Analyzer
+          </button>
         </nav>
 
         {/* Zone 3: Primary Actions */}
         <div className="flex items-center gap-3">
+          <button
+            onClick={onOpenShorts}
+            aria-current={isShortsActive ? 'page' : undefined}
+            aria-label="Shorts Analyzer"
+            className={`md:hidden flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${isShortsActive ? 'border-cyan-400 bg-cyan-950/60 text-cyan-200' : 'border-slate-700 bg-slate-900/80 text-slate-200 hover:bg-slate-800'}`}
+          >
+            <Film className="h-3.5 w-3.5" />
+            <span>Shorts</span>
+          </button>
+
           {hasActiveCase && (
             <button
               onClick={onOpenReport}

@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """TrustLens configuration settings."""
     app_name: str = "TrustLens AIML Engine"
-    app_version: str = "1.0.0-phase4"
+    app_version: str = "1.0.0-prototype"
     debug: bool = False
 
     api_prefix: str = "/api"

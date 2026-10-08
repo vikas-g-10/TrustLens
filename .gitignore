@@ -1,14 +1,20 @@
-node_modules/
-build/
-dist/
-coverage/
-.DS_Store
-*.log
+# Demo videos are hosted separately
+/public/demo-videos/
 
-.env*
+# Local environment and secrets
+.env
+.env.*
 !.env.example
 
+# Python environment and caches
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
+
+# Frontend dependencies and build output
+node_modules/
+dist/
+
+# Generated deployment archive
+/trustlens_deployment.zip
