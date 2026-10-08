@@ -128,18 +128,56 @@ function presentationForVerdict(verdict: AiVerdict | string) {
   return VERDICT_UI[verdict] || VERDICT_UI.INCONCLUSIVE;
 }
 
-const DEMO_VIDEOS_BASE = (import.meta.env.VITE_DEMO_VIDEOS_BASE_URL || '').replace(/\/+$/, '');
+const DEMO_VIDEOS_BASE = (
+  import.meta.env.VITE_DEMO_VIDEOS_BASE_URL || ''
+).replace(/\/+$/, '');
+
+const CLOUDINARY_DEMO_VIDEO_URLS: Record<string, string> = {
+  'legit-1.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502151/legit-1.mp4',
+  'legit-2.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502151/legit-2.mp4',
+  'legit-3.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502152/legit-3.mp4',
+  'legit-4.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502151/legit-4.mp4',
+  'legit-5.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502153/legit-5.mp4',
+  'ai-1.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502148/ai-1.mp4',
+  'ai-2.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502148/ai-2.mp4',
+  'ai-3.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502148/ai-3.mp4',
+  'false-1.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502148/false-1.mp4',
+  'false-2.mp4':
+    'https://res.cloudinary.com/vztndjp5/video/upload/v1791502148/false-2.mp4',
+};
 
 function resolveVideoSrc(path: string): string {
-  if (!path || path.startsWith('blob:') || path.startsWith('http://') || path.startsWith('https://')) {
+  if (
+    !path ||
+    path.startsWith('blob:') ||
+    path.startsWith('http://') ||
+    path.startsWith('https://')
+  ) {
     return path;
   }
-  if (DEMO_VIDEOS_BASE) {
-    return `${DEMO_VIDEOS_BASE}${path.startsWith('/') ? path : '/' + path}`;
+
+  const filename = path.split('/').pop()?.split('?')[0] || path;
+  const cloudinaryUrl = CLOUDINARY_DEMO_VIDEO_URLS[filename];
+
+  if (cloudinaryUrl) {
+    return cloudinaryUrl;
   }
+
+  if (DEMO_VIDEOS_BASE) {
+    return `${DEMO_VIDEOS_BASE}${path.startsWith('/') ? path : `/${path}`}`;
+  }
+
   return path;
 }
-
 function fmt(t: number) {
   if (!Number.isFinite(t) || t < 0) return '0:00';
   const m = Math.floor(t / 60);
