@@ -8,10 +8,10 @@ from datetime import datetime, timezone
 import logging
 from typing import Any, Dict, List, Optional
 
-from backend.schemas.multimodal import AiGenerationAssessment, MultimodalAiResult
-from backend.services.multimodal.image_utils import prepare_image_for_multimodal
-from backend.services.multimodal.prompt import build_multimodal_prompt
-from backend.services.multimodal.provider import (
+from schemas.multimodal import AiGenerationAssessment, MultimodalAiResult
+from services.multimodal.image_utils import prepare_image_for_multimodal
+from services.multimodal.prompt import build_multimodal_prompt
+from services.multimodal.provider import (
     MultimodalProvider,
     MultimodalProviderError,
     get_multimodal_provider,

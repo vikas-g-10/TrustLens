@@ -17,7 +17,7 @@ from typing import Optional, List
 import numpy as np
 from PIL import Image
 
-from backend.schemas.image_analysis import ElaResult
+from schemas.image_analysis import ElaResult
 
 
 def compute_error_level_analysis(

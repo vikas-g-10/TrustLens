@@ -18,8 +18,8 @@ import os
 from typing import Any, Dict, Optional
 import httpx
 
-from backend.config import settings
-from backend.services.multimodal.prompt import SYSTEM_PROMPT
+from config import settings
+from services.multimodal.prompt import SYSTEM_PROMPT
 
 logger = logging.getLogger("trustlens.multimodal")
 

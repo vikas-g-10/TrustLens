@@ -10,8 +10,8 @@ AI-generated-video detection; those capabilities are reported as UNAVAILABLE.
 """
 from typing import Any, List, Literal, Optional
 from pydantic import Field
-from backend.schemas.base import CamelModel
-from backend.schemas.image_analysis import ImageAnalysisResponse
+from schemas.base import CamelModel
+from schemas.image_analysis import ImageAnalysisResponse
 
 VideoClaimRelationship = Literal[
     "SUPPORTS", "CONTRADICTS", "PARTIALLY_SUPPORTS", "UNRELATED", "INSUFFICIENT_EVIDENCE"

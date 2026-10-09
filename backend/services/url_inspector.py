@@ -7,13 +7,13 @@ from typing import Dict, List, Optional, Set, Tuple
 import httpx
 from bs4 import BeautifulSoup
 
-from backend.utils.ssrf_validator import (
+from utils.ssrf_validator import (
     SSRFValidationError,
     validate_url_scheme_and_port,
     assert_safe_hostname,
     resolve_and_verify_destination,
 )
-from backend.schemas.investigation import (
+from schemas.investigation import (
     UrlAnalysisOutcome,
     UrlAnalysisOutcomeSuccess,
     UrlAnalysisOutcomeFailure,

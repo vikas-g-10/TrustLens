@@ -22,19 +22,19 @@ import os
 import sys
 from typing import List
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
 from PIL import Image
 
-from backend.main import app
-from backend.dependencies import rate_limiter
-from backend.schemas.investigation import (
+from main import app
+from dependencies import rate_limiter
+from schemas.investigation import (
     InvestigationResponse,
     MultimodalAiResult,
     MediaAnalysis,
 )
-from backend.schemas.fusion import (
+from schemas.fusion import (
     NormalizedEvidenceItem,
     ConflictReport,
     ConflictDetail,
@@ -42,14 +42,14 @@ from backend.schemas.fusion import (
     EvidenceSummary,
     FusionResult,
 )
-from backend.services.image_analysis.analyzer import analyze_image_file
-from backend.services.image_analysis.computer_vision import calculate_dhash, calculate_phash
-from backend.services.image_analysis.ela import compute_error_level_analysis
-from backend.services.image_analysis.compression import analyze_compression
-from backend.services.image_analysis.evidence_health import calculate_evidence_health
-from backend.services.multimodal.analyzer import _normalize_assessment, _normalize_confidence
-from backend.services.multimodal.prompt import build_multimodal_prompt
-from backend.services.fusion import (
+from services.image_analysis.analyzer import analyze_image_file
+from services.image_analysis.computer_vision import calculate_dhash, calculate_phash
+from services.image_analysis.ela import compute_error_level_analysis
+from services.image_analysis.compression import analyze_compression
+from services.image_analysis.evidence_health import calculate_evidence_health
+from services.multimodal.analyzer import _normalize_assessment, _normalize_confidence
+from services.multimodal.prompt import build_multimodal_prompt
+from services.fusion import (
     fuse_investigation_evidence,
     FusionEngine,
     normalize_all_evidence,
@@ -261,7 +261,7 @@ def test_case_5_conflicting_evidence():
 def test_case_6_duplicate_syndicated_sources():
     print("\n--- Test 6: Source Independence & Duplicate Clustering ---")
     # Simulate 5 search sources where 4 are copies/syndications of the first article
-    from backend.schemas.search import SearchEvidence, SearchResultCandidate
+    from schemas.search import SearchEvidence, SearchResultCandidate
 
     primary_src = SearchResultCandidate(
         url="https://reuters.com/article-original",
@@ -389,7 +389,7 @@ def test_case_9_phase_5_regression():
     assert _normalize_confidence(150) == 1.0
 
     # Prompt construction
-    from backend.services.multimodal.prompt import SYSTEM_PROMPT
+    from services.multimodal.prompt import SYSTEM_PROMPT
     prompt = build_multimodal_prompt(filename="moon.jpg", claim_text="Evaluating moon landing photo")
     assert "Evaluating moon landing photo" not in prompt  # claim withheld to avoid anchoring bias
     assert "Missing EXIF metadata is UNAVAILABLE, NOT suspicious" in SYSTEM_PROMPT

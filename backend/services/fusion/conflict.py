@@ -6,14 +6,14 @@ supporting and contradicting evidence vectors. Prevents silent averaging of oppo
 Produces structured ConflictReport consumed by the decision layer to adjust final confidence.
 """
 from typing import List, Set, Tuple
-from backend.schemas.fusion import (
+from schemas.fusion import (
     NormalizedEvidenceItem,
     EvidenceSummary,
     ConflictReport,
     ConflictDetail,
     ConflictSeverity,
 )
-from backend.services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
+from services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
 
 
 def detect_evidence_conflicts(

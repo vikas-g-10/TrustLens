@@ -5,26 +5,26 @@ Exposes the unified entrypoint for fusing evidence from Phase 4 Image Forensics,
 Phase 5 Multimodal AI, Phase 3 Search Retrieval, and Phase 2 URL Security.
 """
 from typing import Any, Optional
-from backend.schemas.fusion import (
+from schemas.fusion import (
     FusionResult,
     NormalizedEvidenceItem,
     EvidenceSummary,
     ConflictReport,
     TrustTriangle,
 )
-from backend.schemas.image_analysis import ImageAnalysisResponse
-from backend.schemas.investigation import (
+from schemas.image_analysis import ImageAnalysisResponse
+from schemas.investigation import (
     MultimodalAiResult,
     UrlAnalysisOutcome,
 )
-from backend.schemas.search import SearchEvidence
+from schemas.search import SearchEvidence
 
-from backend.services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
-from backend.services.fusion.normalizer import normalize_all_evidence
-from backend.services.fusion.weighting import apply_reliability_weighting
-from backend.services.fusion.conflict import detect_evidence_conflicts
-from backend.services.fusion.engine import FusionEngine
-from backend.services.fusion.explanation import (
+from services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
+from services.fusion.normalizer import normalize_all_evidence
+from services.fusion.weighting import apply_reliability_weighting
+from services.fusion.conflict import detect_evidence_conflicts
+from services.fusion.engine import FusionEngine
+from services.fusion.explanation import (
     generate_deterministic_explanation,
     generate_verdict_explanation,  # re-exported only; deliberately NOT called by the fusion pipeline
 )

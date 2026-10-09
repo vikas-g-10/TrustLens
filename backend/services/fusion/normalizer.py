@@ -12,21 +12,21 @@ Guarantees:
 4. Source clustering IDs are preserved for independence de-duplication.
 """
 from typing import Any, Dict, List, Optional
-from backend.schemas.fusion import (
+from schemas.fusion import (
     NormalizedEvidenceItem,
     EvidenceDirection,
     EvidenceType,
     TargetHypothesis,
 )
-from backend.schemas.image_analysis import ImageAnalysisResponse
-from backend.schemas.investigation import (
+from schemas.image_analysis import ImageAnalysisResponse
+from schemas.investigation import (
     MultimodalAiResult,
     ImageTextEvidence,
     UrlAnalysisOutcome,
     UrlAnalysisOutcomeSuccess,
     UrlAnalysisOutcomeFailure,
 )
-from backend.schemas.search import SearchEvidence
+from schemas.search import SearchEvidence
 
 
 def normalize_all_evidence(
@@ -564,7 +564,7 @@ def normalize_all_evidence(
     # 6. Video evidence (Phase 8): representative-frame evidence, normalized separately
     # =========================================================================
     if video_analysis is not None:
-        from backend.services.fusion.video_normalizer import normalize_video_evidence
+        from services.fusion.video_normalizer import normalize_video_evidence
         items.extend(normalize_video_evidence(video_analysis))
 
     return items

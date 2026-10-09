@@ -24,8 +24,8 @@ from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 import httpx
 from bs4 import BeautifulSoup
 
-from backend.config import settings
-from backend.schemas.search import (
+from config import settings
+from schemas.search import (
     SearchResultCandidate,
     SourceCluster,
     GeneratedQuery,
@@ -35,12 +35,12 @@ from backend.schemas.search import (
     ContentStatus,
     RetrievalStatus,
 )
-from backend.services.search.base import SearchProvider, SearchProviderError, RawSearchResult
-from backend.services.search.duckduckgo_provider import DuckDuckGoSearchProvider
-from backend.services.search.tavily_provider import TavilySearchProvider
-from backend.services.source_reliability import evaluate_source_reliability, get_root_domain
-from backend.services.source_independence import cluster_sources_by_independence
-from backend.utils.ssrf_validator import validate_url_ssrf_safety, is_blocked_ip
+from services.search.base import SearchProvider, SearchProviderError, RawSearchResult
+from services.search.duckduckgo_provider import DuckDuckGoSearchProvider
+from services.search.tavily_provider import TavilySearchProvider
+from services.source_reliability import evaluate_source_reliability, get_root_domain
+from services.source_independence import cluster_sources_by_independence
+from utils.ssrf_validator import validate_url_ssrf_safety, is_blocked_ip
 
 
 # Contradiction / Debunking lexical markers

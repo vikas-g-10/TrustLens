@@ -16,12 +16,12 @@ import re
 from typing import List, Set, Tuple
 from urllib.parse import urlparse
 
-from backend.schemas.search import (
+from schemas.search import (
     SearchResultCandidate,
     SourceCluster,
     IndependenceLevel,
 )
-from backend.services.source_reliability import get_root_domain
+from services.source_reliability import get_root_domain
 
 
 # Known wire services that syndicate across thousands of outlets

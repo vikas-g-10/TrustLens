@@ -2,12 +2,12 @@ from datetime import datetime, timezone
 from typing import Optional, List, Any
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse
-from backend.dependencies import check_rate_limit
-from backend.services.url_inspector import inspect_url
-from backend.services.search.search_service import SearchService, ClaimQueryGenerator
-from backend.services.source_reliability import get_root_domain
-from backend.schemas.search import SearchEvidence
-from backend.schemas.investigation import (
+from dependencies import check_rate_limit
+from services.url_inspector import inspect_url
+from services.search.search_service import SearchService, ClaimQueryGenerator
+from services.source_reliability import get_root_domain
+from schemas.search import SearchEvidence
+from schemas.investigation import (
     InvestigationResponse,
     AiReasoning,
     Claim,
@@ -21,19 +21,19 @@ from backend.schemas.investigation import (
     MultimodalAiResult,
     Contradiction,
 )
-from backend.services.image_analysis.analyzer import analyze_image_file
-from backend.services.image_analysis.decoder import ImageValidationError
-from backend.services.image_analysis.image_text_evidence import compare_image_text_to_claim
-from backend.schemas.image_analysis import ImageAnalysisResponse
-from backend.services.multimodal import analyze_multimodal_image
-from backend.services.fusion import fuse_investigation_evidence
-from backend.config import settings
-from backend.services.video_analysis.analyzer import (
+from services.image_analysis.analyzer import analyze_image_file
+from services.image_analysis.decoder import ImageValidationError
+from services.image_analysis.image_text_evidence import compare_image_text_to_claim
+from schemas.image_analysis import ImageAnalysisResponse
+from services.multimodal import analyze_multimodal_image
+from services.fusion import fuse_investigation_evidence
+from config import settings
+from services.video_analysis.analyzer import (
     VideoAnalysisBundle,
     add_multimodal_frame,
     analyze_video_file,
 )
-from backend.services.video_analysis.probe import is_video_upload
+from services.video_analysis.probe import is_video_upload
 
 router = APIRouter(tags=["Investigation"])
 

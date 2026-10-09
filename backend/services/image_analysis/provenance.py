@@ -16,7 +16,7 @@ import re
 from typing import List, Optional
 from PIL import Image
 
-from backend.schemas.image_analysis import ProvenanceSignals
+from schemas.image_analysis import ProvenanceSignals
 
 AI_GENERATOR_MARKERS = [
     "midjourney", "dall-e", "dall·e", "dalle", "openai", "stable diffusion",

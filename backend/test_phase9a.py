@@ -14,22 +14,22 @@ import sys
 
 import pytest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
 
-from backend.config import settings
-from backend.dependencies import rate_limiter
-from backend.main import app
-from backend.schemas.investigation import MultimodalAiResult
-from backend.services.fusion import (
+from config import settings
+from dependencies import rate_limiter
+from main import app
+from schemas.investigation import MultimodalAiResult
+from services.fusion import (
     FusionEngine,
     apply_reliability_weighting,
     detect_evidence_conflicts,
     fuse_investigation_evidence,
     normalize_all_evidence,
 )
-from backend.services.image_analysis.analyzer import analyze_image_file
+from services.image_analysis.analyzer import analyze_image_file
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 
@@ -108,7 +108,7 @@ def no_llm(monkeypatch):
 def hostile_llm(monkeypatch):
     """An LLM IS configured and would answer with text contradicting the verdict.
     Any HTTP use by the explanation layer is recorded, so the test can prove it never happens."""
-    import backend.services.fusion.explanation as explanation
+    import services.fusion.explanation as explanation
 
     calls = []
 

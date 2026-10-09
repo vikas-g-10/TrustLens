@@ -21,7 +21,7 @@ File Health
 └── forensic reliability
 """
 from typing import List
-from backend.schemas.image_analysis import (
+from schemas.image_analysis import (
     FileMetadata,
     ExifMetadata,
     CompressionIndicators,

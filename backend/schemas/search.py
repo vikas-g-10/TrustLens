@@ -6,7 +6,7 @@ Search results represent CANDIDATE EVIDENCE only and maintain explicit provenanc
 """
 from typing import List, Optional, Literal, Dict, Any
 from pydantic import Field
-from backend.schemas.investigation import CamelModel
+from schemas.investigation import CamelModel
 
 
 EvidenceRole = Literal['SUPPORTING', 'CONTRADICTING', 'NEUTRAL', 'UNKNOWN']

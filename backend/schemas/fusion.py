@@ -7,7 +7,7 @@ All models inherit from CamelModel for frontend camelCase JSON serialization.
 """
 from typing import Any, Dict, List, Literal, Optional
 from pydantic import Field
-from backend.schemas.base import CamelModel
+from schemas.base import CamelModel
 
 
 EvidenceDirection = Literal[

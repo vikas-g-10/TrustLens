@@ -13,7 +13,7 @@ import math
 import numpy as np
 from PIL import Image
 
-from backend.schemas.image_analysis import ComputerVisionSignals, SharpnessLevel, BrightnessLevel
+from schemas.image_analysis import ComputerVisionSignals, SharpnessLevel, BrightnessLevel
 
 
 def _compute_dhash(img: Image.Image) -> str:

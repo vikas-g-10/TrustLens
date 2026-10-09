@@ -8,18 +8,18 @@ and structured evidence assembly.
 from datetime import datetime, timezone
 from typing import List
 
-from backend.schemas.image_analysis import (
+from schemas.image_analysis import (
     ImageAnalysisResponse,
     ImageEvidenceItem,
 )
-from backend.services.image_analysis.decoder import validate_and_decode_image
-from backend.services.image_analysis.metadata import extract_exif_metadata
-from backend.services.image_analysis.compression import analyze_compression
-from backend.services.image_analysis.ela import compute_error_level_analysis
-from backend.services.image_analysis.computer_vision import extract_computer_vision_signals
-from backend.services.image_analysis.ocr import extract_ocr_text
-from backend.services.image_analysis.evidence_health import calculate_evidence_health
-from backend.services.image_analysis.provenance import scan_ai_provenance
+from services.image_analysis.decoder import validate_and_decode_image
+from services.image_analysis.metadata import extract_exif_metadata
+from services.image_analysis.compression import analyze_compression
+from services.image_analysis.ela import compute_error_level_analysis
+from services.image_analysis.computer_vision import extract_computer_vision_signals
+from services.image_analysis.ocr import extract_ocr_text
+from services.image_analysis.evidence_health import calculate_evidence_health
+from services.image_analysis.provenance import scan_ai_provenance
 
 
 def analyze_image_file(

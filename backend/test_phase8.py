@@ -19,18 +19,18 @@ import cv2
 import numpy as np
 import pytest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from backend.schemas.fusion import NormalizedEvidenceItem
-from backend.services.fusion import fuse_investigation_evidence
-from backend.services.fusion.conflict import detect_evidence_conflicts
-from backend.services.fusion.engine import FusionEngine
-from backend.services.fusion.weighting import apply_reliability_weighting
-from backend.services.image_analysis.analyzer import analyze_image_file
-from backend.services.image_analysis.ocr import _resolve_tesseract_binary
-from backend.services.video_analysis.analyzer import analyze_video_file
-from backend.services.video_analysis.frames import extract_frames, sample_targets
-from backend.services.video_analysis.probe import VideoProbeError, is_video_upload, probe_video
+from schemas.fusion import NormalizedEvidenceItem
+from services.fusion import fuse_investigation_evidence
+from services.fusion.conflict import detect_evidence_conflicts
+from services.fusion.engine import FusionEngine
+from services.fusion.weighting import apply_reliability_weighting
+from services.image_analysis.analyzer import analyze_image_file
+from services.image_analysis.ocr import _resolve_tesseract_binary
+from services.video_analysis.analyzer import analyze_video_file
+from services.video_analysis.frames import extract_frames, sample_targets
+from services.video_analysis.probe import VideoProbeError, is_video_upload, probe_video
 
 FIXTURES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "fixtures"))
 TEXT = "SALE 50 PERCENT OFF TODAY"
@@ -213,7 +213,7 @@ def test_web_corroboration_cannot_certify_an_uploaded_video(videos):
     web = [_web_item(1), _web_item(2)]
     assert _fuse_items(list(web)).verdict == "LIKELY_AUTHENTIC"  # baseline: text-only claim, unchanged
     res = _run(analyze_video_file(_bytes(videos["mp4"]), "clip.mp4", "video/mp4", "")).result
-    from backend.services.fusion.video_normalizer import normalize_video_evidence
+    from services.fusion.video_normalizer import normalize_video_evidence
     with_video = _fuse_items(list(web) + normalize_video_evidence(res))
     assert with_video.verdict == "INCONCLUSIVE"
 
@@ -263,7 +263,7 @@ def test_image_pipeline_regression():
 # 9 ---------------------------------------------------------------------------------------------
 def test_investigate_endpoint_video(videos):
     from fastapi.testclient import TestClient
-    from backend.main import app
+    from main import app
     client = TestClient(app)
     r = client.post("/api/investigate", data={"claim": "The video says the sale is 80 percent off"},
                     files={"file": ("clip.mp4", _bytes(videos["mp4"]), "video/mp4")})

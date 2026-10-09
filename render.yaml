@@ -1,8 +1,10 @@
+# Optional: Docker-based alternative to Vercel (keeps tesseract + ffmpeg available).
 services:
   - type: web
     name: trustlens-api
     env: docker
-    dockerfilePath: backend/Dockerfile
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
     plan: free
     region: oregon
     envVars:
@@ -13,4 +15,4 @@ services:
       - key: LLM_PROVIDER
         value: groq
       - key: CORS_ORIGINS
-        value: "https://trustlens.vercel.app"
+        value: '["https://trustlens.vercel.app"]'

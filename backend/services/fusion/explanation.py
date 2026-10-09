@@ -16,8 +16,8 @@ import os
 from typing import Any, Dict, List, Optional
 import httpx
 
-from backend.config import settings
-from backend.schemas.fusion import FusionResult, NormalizedEvidenceItem
+from config import settings
+from schemas.fusion import FusionResult, NormalizedEvidenceItem
 
 logger = logging.getLogger("trustlens.fusion.explanation")
 

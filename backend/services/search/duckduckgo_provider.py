@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 from urllib.parse import urlparse
 
-from backend.services.search.base import SearchProvider, SearchProviderError, RawSearchResult
+from services.search.base import SearchProvider, SearchProviderError, RawSearchResult
 
 
 class DuckDuckGoSearchProvider(SearchProvider):

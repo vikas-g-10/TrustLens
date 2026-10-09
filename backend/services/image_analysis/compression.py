@@ -7,7 +7,7 @@ Never fabricates recompression scores or fake manipulation probabilities.
 from typing import Optional
 from PIL import Image
 
-from backend.schemas.image_analysis import CompressionIndicators
+from schemas.image_analysis import CompressionIndicators
 
 
 # Standard Independent JPEG Group (IJG) Reference Luminance Quantization Table

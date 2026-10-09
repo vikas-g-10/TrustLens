@@ -17,17 +17,17 @@ import sys
 
 import pytest
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
 from PIL import Image, ImageDraw, ImageFont
 
-from backend.dependencies import rate_limiter
-from backend.main import app
-from backend.schemas.image_analysis import OcrResult
-from backend.services.fusion import fuse_investigation_evidence
-from backend.services.image_analysis.image_text_evidence import compare_image_text_to_claim
-from backend.services.image_analysis.ocr import extract_ocr_text, _resolve_tesseract_binary
+from dependencies import rate_limiter
+from main import app
+from schemas.image_analysis import OcrResult
+from services.fusion import fuse_investigation_evidence
+from services.image_analysis.image_text_evidence import compare_image_text_to_claim
+from services.image_analysis.ocr import extract_ocr_text, _resolve_tesseract_binary
 
 client = TestClient(app)
 CLAIM = "Government X announced a new ₹5000 subsidy."
@@ -112,7 +112,7 @@ def test_6_real_phase4_ocr():
 
 
 def test_7_fusion_evidence_item_and_quality_effect():
-    from backend.schemas.investigation import ImageTextEvidence
+    from schemas.investigation import ImageTextEvidence
     import asyncio
 
     def run(ite):
@@ -144,7 +144,7 @@ def test_7_fusion_evidence_item_and_quality_effect():
 
 
 def test_8_api_returns_image_text_evidence(monkeypatch):
-    import backend.services.image_analysis.analyzer as analyzer
+    import services.image_analysis.analyzer as analyzer
     monkeypatch.setattr(
         analyzer, "extract_ocr_text",
         lambda img: ocr("Government X announces ₹5000 subsidy for farmers from January 2027."))

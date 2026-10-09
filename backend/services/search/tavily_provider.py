@@ -8,7 +8,7 @@ from typing import List, Optional
 from urllib.parse import urlparse
 import httpx
 
-from backend.services.search.base import SearchProvider, SearchProviderError, RawSearchResult
+from services.search.base import SearchProvider, SearchProviderError, RawSearchResult
 
 
 class TavilySearchProvider(SearchProvider):

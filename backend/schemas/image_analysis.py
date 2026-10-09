@@ -7,7 +7,7 @@ from CamelModel for frontend camelCase JSON serialization.
 """
 from typing import List, Optional, Literal, Dict, Any
 from pydantic import Field
-from backend.schemas.investigation import CamelModel, MultimodalAiResult
+from schemas.investigation import CamelModel, MultimodalAiResult
 
 
 HealthStatus = Literal["EXCELLENT", "GOOD", "FAIR", "POOR", "UNUSABLE"]

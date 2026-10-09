@@ -23,8 +23,8 @@ import unicodedata
 from dataclasses import dataclass, field
 from typing import Any, List, Optional, Set, Tuple
 
-from backend.schemas.image_analysis import OcrResult
-from backend.schemas.investigation import ImageTextEvidence
+from schemas.image_analysis import OcrResult
+from schemas.investigation import ImageTextEvidence
 
 # ----------------------------------------------------------------------------
 # Tunables

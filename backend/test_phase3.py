@@ -25,30 +25,30 @@ import os
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
-from backend.main import app
-from backend.schemas.search import (
+from main import app
+from schemas.search import (
     SearchResultCandidate,
     GeneratedQuery,
     SearchEvidence,
 )
-from backend.services.search.base import (
+from services.search.base import (
     SearchProvider,
     SearchProviderError,
     RawSearchResult,
 )
-from backend.services.search.duckduckgo_provider import DuckDuckGoSearchProvider
-from backend.services.search.search_service import (
+from services.search.duckduckgo_provider import DuckDuckGoSearchProvider
+from services.search.search_service import (
     SearchService,
     ClaimQueryGenerator,
     EvidenceClassifier,
     normalize_source_url,
 )
-from backend.services.source_reliability import evaluate_source_reliability, get_root_domain
-from backend.services.source_independence import cluster_sources_by_independence
-from backend.utils.ssrf_validator import (
+from services.source_reliability import evaluate_source_reliability, get_root_domain
+from services.source_independence import cluster_sources_by_independence
+from utils.ssrf_validator import (
     validate_url_ssrf_safety,
     assert_safe_hostname,
     SSRFValidationError,
@@ -253,7 +253,7 @@ def test_10_search_failure_returns_transparent_failed_state():
     client = TestClient(app)
     # Monkeypatch to ensure endpoint also fails transparently
     from unittest.mock import patch
-    with patch("backend.routers.investigate.SearchService", return_value=svc):
+    with patch("routers.investigate.SearchService", return_value=svc):
         resp = client.post("/api/investigate", json={"claim": "Test claim with failing search"})
         assert resp.status_code == 200, f"Expected 200, got {resp.status_code}"
         data = resp.json()
@@ -271,7 +271,7 @@ def test_11_empty_search_results_do_not_produce_high_risk():
 
     client = TestClient(app)
     from unittest.mock import patch
-    with patch("backend.routers.investigate.SearchService", return_value=svc):
+    with patch("routers.investigate.SearchService", return_value=svc):
         resp = client.post("/api/investigate", json={"claim": "Obscure non-existent event 982347"})
         assert resp.status_code == 200
         data = resp.json()

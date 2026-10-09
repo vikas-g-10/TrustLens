@@ -32,26 +32,26 @@ import sys
 import subprocess
 from fractions import Fraction
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from PIL import Image
 from PIL.ExifTags import TAGS, IFD
 from fastapi.testclient import TestClient
 
-from backend.main import app
-from backend.schemas.image_analysis import ImageAnalysisResponse
-from backend.schemas.investigation import InvestigationResponse
-from backend.services.image_analysis.decoder import validate_and_decode_image
-from backend.services.image_analysis.computer_vision import (
+from main import app
+from schemas.image_analysis import ImageAnalysisResponse
+from schemas.investigation import InvestigationResponse
+from services.image_analysis.decoder import validate_and_decode_image
+from services.image_analysis.computer_vision import (
     calculate_dhash,
     calculate_phash,
     compute_hash_distance,
     compute_hash_similarity_pct,
     compute_computer_vision_signals,
 )
-from backend.services.image_analysis.ela import compute_error_level_analysis
-from backend.services.image_analysis.compression import inspect_jpeg_compression
-from backend.services.source_reliability import evaluate_source_reliability
+from services.image_analysis.ela import compute_error_level_analysis
+from services.image_analysis.compression import inspect_jpeg_compression
+from services.source_reliability import evaluate_source_reliability
 
 client = TestClient(app)
 
@@ -276,7 +276,7 @@ def run_tests():
     # 15. TRY DEMO CASE verification & isolation
     # -------------------------------------------------------------
     # Verify DEMO_CASE is available in frontend demoCase.ts and that live investigate never defaults to demo
-    from backend.dependencies import rate_limiter
+    from dependencies import rate_limiter
     rate_limiter.hits.clear()
     res_live_claim = client.post("/api/investigate", json={"claim": "A completely unique test assertion"})
     assert res_live_claim.status_code == 200
@@ -304,20 +304,20 @@ def run_tests():
     # -------------------------------------------------------------
     # 18. Python syntax & module imports across all backend services
     # -------------------------------------------------------------
-    import backend.config
-    import backend.dependencies
-    import backend.main
-    import backend.routers.health
-    import backend.routers.investigate
-    import backend.routers.image_analysis
-    import backend.services.image_analysis.analyzer
-    import backend.services.image_analysis.decoder
-    import backend.services.image_analysis.metadata
-    import backend.services.image_analysis.compression
-    import backend.services.image_analysis.ela
-    import backend.services.image_analysis.computer_vision
-    import backend.services.image_analysis.ocr
-    import backend.services.image_analysis.evidence_health
+    import config
+    import dependencies
+    import main
+    import routers.health
+    import routers.investigate
+    import routers.image_analysis
+    import services.image_analysis.analyzer
+    import services.image_analysis.decoder
+    import services.image_analysis.metadata
+    import services.image_analysis.compression
+    import services.image_analysis.ela
+    import services.image_analysis.computer_vision
+    import services.image_analysis.ocr
+    import services.image_analysis.evidence_health
     print("[PASS] Test 18: Python syntax and clean imports verified across all backend modules.")
 
     # -------------------------------------------------------------

@@ -28,29 +28,29 @@ import subprocess
 import sys
 from typing import Any, Dict
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
 from PIL import Image
 
-from backend.config import settings
-from backend.main import app
-from backend.schemas.image_analysis import ImageAnalysisResponse
-from backend.schemas.investigation import InvestigationResponse, MultimodalAiResult
-from backend.schemas.multimodal import AiGenerationAssessment
-from backend.services.image_analysis.analyzer import analyze_image_file
-from backend.services.multimodal.analyzer import (
+from config import settings
+from main import app
+from schemas.image_analysis import ImageAnalysisResponse
+from schemas.investigation import InvestigationResponse, MultimodalAiResult
+from schemas.multimodal import AiGenerationAssessment
+from services.image_analysis.analyzer import analyze_image_file
+from services.multimodal.analyzer import (
     _ensure_string_list,
     _normalize_assessment,
     _normalize_confidence,
     analyze_multimodal_image,
 )
-from backend.services.multimodal.image_utils import (
+from services.multimodal.image_utils import (
     MAX_VISION_DIMENSION,
     prepare_image_for_multimodal,
 )
-from backend.services.multimodal.prompt import build_multimodal_prompt
-from backend.services.multimodal.provider import (
+from services.multimodal.prompt import build_multimodal_prompt
+from services.multimodal.provider import (
     MultimodalProvider,
     MultimodalProviderError,
     OpenAiCompatibleProvider,
@@ -155,7 +155,7 @@ def test_prompt_construction():
         search_evidence=None,
     )
 
-    from backend.services.multimodal.prompt import SYSTEM_PROMPT
+    from services.multimodal.prompt import SYSTEM_PROMPT
 
     assert "The Pope was seen wearing a white Balenciaga puffer coat." not in prompt  # claim withheld to avoid anchoring
     assert "Evidence Health Score:" in prompt
@@ -367,7 +367,7 @@ def test_no_credential_leakage():
 def test_frontend_build_and_lint():
     """Test 10: Frontend TypeScript Build & ESLint Verification."""
     print("\n--- Test 10: Frontend Build & Lint ---")
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    repo_root = os.path.dirname(os.path.abspath(__file__))
 
     print("Running npm run lint...")
     lint_res = subprocess.run(["npm", "run", "lint"], cwd=repo_root, capture_output=True, text=True, shell=True)

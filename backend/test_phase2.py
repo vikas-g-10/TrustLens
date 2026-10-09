@@ -5,11 +5,11 @@ import sys
 import os
 import asyncio
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
-from backend.main import app
-from backend.services.url_inspector import inspect_url
+from main import app
+from services.url_inspector import inspect_url
 
 
 def test_ssrf_security_cases():

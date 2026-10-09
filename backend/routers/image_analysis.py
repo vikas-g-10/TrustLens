@@ -8,12 +8,12 @@ deterministic computer vision measurements, and OCR text extraction.
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from fastapi.responses import JSONResponse
 
-from backend.dependencies import check_rate_limit
-from backend.schemas.image_analysis import ImageAnalysisResponse
-from backend.services.image_analysis.analyzer import analyze_image_file
-from backend.services.image_analysis.decoder import ImageValidationError
+from dependencies import check_rate_limit
+from schemas.image_analysis import ImageAnalysisResponse
+from services.image_analysis.analyzer import analyze_image_file
+from services.image_analysis.decoder import ImageValidationError
 
-from backend.services.multimodal import analyze_multimodal_image
+from services.multimodal import analyze_multimodal_image
 
 router = APIRouter(tags=["Image Analysis"])
 

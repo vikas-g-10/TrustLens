@@ -10,7 +10,7 @@ import shutil
 from typing import Optional
 from PIL import Image
 
-from backend.schemas.image_analysis import OcrResult, OcrStatus, OcrQuality
+from schemas.image_analysis import OcrResult, OcrStatus, OcrQuality
 
 
 # Standard Windows installation candidates

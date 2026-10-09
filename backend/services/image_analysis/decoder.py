@@ -14,8 +14,8 @@ import os
 from typing import Tuple
 from PIL import Image, UnidentifiedImageError
 
-from backend.config import settings
-from backend.schemas.image_analysis import FileMetadata
+from config import settings
+from schemas.image_analysis import FileMetadata
 
 
 # Supported format mappings

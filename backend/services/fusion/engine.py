@@ -12,7 +12,7 @@ EPISTEMIC GUARANTEES:
 5. When evidence is sparse or contradictory, verdict transparently remains INCONCLUSIVE.
 """
 from typing import List, Optional, Tuple
-from backend.schemas.fusion import (
+from schemas.fusion import (
     NormalizedEvidenceItem,
     EvidenceSummary,
     ConflictReport,
@@ -20,8 +20,8 @@ from backend.schemas.fusion import (
     FusionResult,
     FinalVerdictType,
 )
-from backend.schemas.investigation import UrlAnalysisOutcome
-from backend.services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
+from schemas.investigation import UrlAnalysisOutcome
+from services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
 
 
 class FusionEngine:

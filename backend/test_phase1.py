@@ -3,10 +3,10 @@ Automated validation script for TrustLens Phase 1 FastAPI implementation.
 """
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi.testclient import TestClient
-from backend.main import app
+from main import app
 
 def test_phase1():
     client = TestClient(app)

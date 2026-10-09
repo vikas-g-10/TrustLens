@@ -1,0 +1,8 @@
+test_*.py
+fixtures/
+Dockerfile
+.env
+.env.*
+__pycache__/
+.pytest_cache/
+.venv/

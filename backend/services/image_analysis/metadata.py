@@ -14,7 +14,7 @@ from typing import Optional
 from PIL import Image
 from PIL.ExifTags import TAGS
 
-from backend.schemas.image_analysis import ExifMetadata, MetadataStatus
+from schemas.image_analysis import ExifMetadata, MetadataStatus
 
 EDITING_SOFTWARE_KEYWORDS = [
     "photoshop", "gimp", "lightroom", "canva", "snapseed",

@@ -2,7 +2,7 @@ import time
 from collections import defaultdict
 from typing import Dict, List
 from fastapi import Request, HTTPException, status
-from backend.config import settings
+from config import settings
 
 
 class RateLimiter:

@@ -10,8 +10,8 @@ already consumes. It makes no verdict. Guarantees:
 - Every item carries provenance: source_type=VIDEO, source=uploaded_video, frame_index/timestamp.
 """
 from typing import Any, Dict, List
-from backend.schemas.fusion import NormalizedEvidenceItem
-from backend.schemas.video_analysis import VideoAnalysisResult, VideoFrameEvidence
+from schemas.fusion import NormalizedEvidenceItem
+from schemas.video_analysis import VideoAnalysisResult, VideoFrameEvidence
 
 _SRC = {"source_type": "VIDEO", "source": "uploaded_video"}
 _NOT_PROOF = "A video that decodes and analyzes successfully is not thereby shown to be authentic."

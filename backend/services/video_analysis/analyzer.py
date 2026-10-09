@@ -13,14 +13,14 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from backend.config import settings
-from backend.schemas.video_analysis import (
+from config import settings
+from schemas.video_analysis import (
     VideoAnalysisResult, VideoCapability, VideoClaimComparison, VideoFrameEvidence, VideoMetadata,
 )
-from backend.services.image_analysis.analyzer import analyze_image_file
-from backend.services.image_analysis.image_text_evidence import compare_image_text_to_claim
-from backend.services.video_analysis.frames import encode_frame_png, extract_frames, thumbnail_data_url
-from backend.services.video_analysis.probe import ALLOWED_EXTENSIONS, VideoProbeError, probe_video
+from services.image_analysis.analyzer import analyze_image_file
+from services.image_analysis.image_text_evidence import compare_image_text_to_claim
+from services.video_analysis.frames import encode_frame_png, extract_frames, thumbnail_data_url
+from services.video_analysis.probe import ALLOWED_EXTENSIONS, VideoProbeError, probe_video
 
 SOURCE_TYPE, SOURCE = "VIDEO", "uploaded_video"
 
@@ -251,7 +251,7 @@ async def add_multimodal_frame(bundle: VideoAnalysisBundle, claim_text: str, sea
         return
     frame = next((f for f in cands if f.position == "middle"), cands[0])
     try:
-        from backend.services.multimodal import analyze_multimodal_image
+        from services.multimodal import analyze_multimodal_image
         frame.multimodal = await analyze_multimodal_image(
             image_bytes=bundle.frame_png[frame.frame_ref], filename=f"{frame.frame_ref}.png", mime_type="image/png",
             claim_text=claim_text, image_analysis=frame.image_analysis, search_evidence=search_evidence)

@@ -1,8 +1,8 @@
 from typing import List, Optional, Literal, Union, Dict, Any
 from pydantic import Field
 
-from backend.schemas.base import CamelModel
-from backend.schemas.fusion import (
+from schemas.base import CamelModel
+from schemas.fusion import (
     TrustTriangle,
     EvidenceSummary,
     ConflictReport,

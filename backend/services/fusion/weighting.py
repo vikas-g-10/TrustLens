@@ -13,8 +13,8 @@ Weighting Formulation:
 """
 from collections import defaultdict
 from typing import Dict, List, Set, Tuple
-from backend.schemas.fusion import NormalizedEvidenceItem, EvidenceSummary
-from backend.services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
+from schemas.fusion import NormalizedEvidenceItem, EvidenceSummary
+from services.fusion.config import FusionConfig, DEFAULT_FUSION_CONFIG
 
 
 def apply_reliability_weighting(
