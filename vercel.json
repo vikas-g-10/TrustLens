@@ -2,22 +2,21 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
-      "destination": "/landing.html"
+      "src": "/",
+      "dest": "/landing.html"
     },
     {
-      "source": "/app",
-      "destination": "/index.html"
+      "src": "/app(?:/(.*))?",
+      "dest": "/index.html"
     },
     {
-      "source": "/app/(.*)",
-      "destination": "/index.html"
+      "handle": "filesystem"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
