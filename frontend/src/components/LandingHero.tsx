@@ -23,6 +23,7 @@ import { InputTab } from '../types/investigation';
 import { analyzeImage } from '../services/investigationApi';
 import type { ImageAnalysisResponse } from '../types/imageAnalysis';
 import { ImageEvidenceModal } from './ImageEvidenceModal';
+import { VIDEO_ACCEPT, validateAndExtractVideo, type VideoValidation } from '../lib/videoFrames';
 
 interface LandingHeroProps {
   onInvestigate: (claim: string, mediaName?: string, url?: string, isDemo?: boolean, file?: File | null) => void;
@@ -56,21 +57,43 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
   const [imageAnalysisResult, setImageAnalysisResult] = useState<ImageAnalysisResponse | null>(null);
   const [imageError, setImageError] = useState<string>('');
   const [isImageModalOpen, setIsImageModalOpen] = useState<boolean>(false);
+  const [videoValidation, setVideoValidation] = useState<VideoValidation | null>(null);
+  const [isValidatingVideo, setIsValidatingVideo] = useState(false);
+  const [videoError, setVideoError] = useState('');
 
   // Phase 8: video files go through INVESTIGATE (backend video pipeline), not the image-only analyzer.
   const isVideoFile = (f: File | null) => !!f && (f.type.startsWith('video/') || /\.(mp4|mov|webm|avi)$/i.test(f.name));
 
+  const selectMediaFile = async (file: File) => {
+    const video = isVideoFile(file);
+    if (video) {
+      setIsValidatingVideo(true);
+      setVideoError('');
+      if (videoValidation?.thumbnailUrl) URL.revokeObjectURL(videoValidation.thumbnailUrl);
+      setVideoValidation(null);
+    }
+    try {
+      const validation = video ? await validateAndExtractVideo(file) : null;
+      setImageError('');
+      setSelectedImageFile(file);
+      setImageAnalysisResult(null);
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+      setImagePreviewUrl(URL.createObjectURL(file));
+      if (video) setVideoValidation(validation);
+      if (!claim.trim()) setClaim(`Forensic ${video ? 'video' : 'image'} verification for ${file.name}`);
+    } catch (err) {
+      setVideoError(err instanceof Error ? err.message : 'The selected video could not be read.');
+      if (video) setSelectedImageFile(null);
+    } finally {
+      if (video) setIsValidatingVideo(false);
+    }
+  };
+
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setImageError('');
-    setSelectedImageFile(file);
-    setImageAnalysisResult(null);
-    const objectUrl = URL.createObjectURL(file);
-    setImagePreviewUrl(objectUrl);
-    if (!claim.trim()) {
-      setClaim(`Forensic ${isVideoFile(file) ? 'video' : 'image'} verification for ${file.name}`);
-    }
+    void selectMediaFile(file);
+    e.target.value = '';
   };
 
   const handleRunImageAnalysis = async () => {
@@ -96,10 +119,17 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
     }
     setImageAnalysisResult(null);
     setImageError('');
+    if (videoValidation?.thumbnailUrl) URL.revokeObjectURL(videoValidation.thumbnailUrl);
+    setVideoValidation(null);
+    setVideoError('');
   };
 
   const handleStartInvestigate = () => {
     const finalClaim = claim.trim();
+    if (activeTab === 'VIDEO' && !isDemoPopulated && (!selectedImageFile || !isVideoFile(selectedImageFile) || !videoValidation)) {
+      setError(isValidatingVideo ? 'Checking the video…' : 'Choose a valid video before investigating.');
+      return;
+    }
     if (!finalClaim && !selectedImageFile) {
       setError('Enter a claim, URL, or upload an image to investigate, or click TRY DEMO CASE.');
       return;
@@ -226,10 +256,42 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
               </div>
             </div>
 
-            {/* Video Tab Notice */}
+            {/* Video Tab: direct, browser-validated upload */}
             {activeTab === 'VIDEO' && !isDemoPopulated && (
-              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2.5 text-[11px] font-mono text-slate-400">
-                Video upload (MP4 · MOV · WebM · AVI) is supported: TrustLens checks file health and analyzes up to 3 representative frames (beginning, middle, end), including on-screen text compared with your claim. It does not detect deepfakes or AI-generated video, and a decodable video is not proof of authenticity. Choose your video in the IMAGE tab's upload area (it accepts video files), then click INVESTIGATE.
+              <div className="rounded-lg border border-slate-800 bg-slate-950/80 p-3 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <label className="block text-xs font-mono text-cyan-300 font-bold uppercase tracking-wider">VIDEO FORENSIC UPLOAD</label>
+                  <span className="text-[10px] font-mono text-slate-400">MP4 · MOV · WebM · AVI · max 30 MB</span>
+                </div>
+                <input id="video-file-input" type="file" accept={VIDEO_ACCEPT} className="hidden" onChange={handleImageFileChange} />
+                {!selectedImageFile || !isVideoFile(selectedImageFile) ? (
+                  <label
+                    htmlFor="video-file-input"
+                    onDragOver={(event) => event.preventDefault()}
+                    onDrop={(event) => { event.preventDefault(); const file = event.dataTransfer.files?.[0]; if (file) void selectMediaFile(file); }}
+                    className="flex min-h-32 flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-700 bg-slate-900/40 p-6 text-center transition-all hover:border-cyan-500/60 hover:bg-slate-900/70 cursor-pointer"
+                  >
+                    <Upload className="mb-2 h-8 w-8 text-slate-400" />
+                    <span className="text-xs font-semibold text-slate-200 font-mono">Drop a video here or <span className="text-cyan-300 underline">Choose video</span></span>
+                    <span className="mt-1 text-[10px] text-slate-500 font-mono">Browser checks file health and extracts beginning, middle and end frames.</span>
+                  </label>
+                ) : (
+                  <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3 space-y-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                      {videoValidation?.thumbnailUrl && <img src={videoValidation.thumbnailUrl} alt="Video middle-frame preview" className="h-20 w-32 rounded object-cover border border-slate-600" />}
+                      <div className="min-w-0 flex-1 font-mono">
+                        <div className="truncate text-xs font-bold text-white">{selectedImageFile.name}</div>
+                        <div className="text-[10px] text-slate-400">{(selectedImageFile.size / 1024 / 1024).toFixed(2)} MB · {videoValidation?.width}×{videoValidation?.height} · {videoValidation?.duration.toFixed(2)}s</div>
+                        <div className="mt-1 text-[10px] text-emerald-300">Ready: 3 representative frames will be checked.</div>
+                      </div>
+                      <label htmlFor="video-file-input" className="cursor-pointer text-xs font-mono text-cyan-300 underline">Replace</label>
+                      <button type="button" onClick={handleClearImage} className="text-xs font-mono text-slate-400 underline hover:text-rose-300">Remove</button>
+                    </div>
+                  </div>
+                )}
+                {isValidatingVideo && <p className="text-xs font-mono text-cyan-300">Checking video format and extracting preview frames…</p>}
+                {videoError && <p role="alert" className="rounded border border-rose-500/40 bg-rose-950/40 p-2.5 text-xs font-mono text-rose-300">{videoError}</p>}
+                <p className="text-[11px] font-mono leading-relaxed text-slate-400">TrustLens checks file health and analyzes up to 3 representative frames (beginning, middle, end), including on-screen text compared with your claim. It does not detect deepfakes or AI-generated video, and a decodable video is not proof of authenticity.</p>
               </div>
             )}
 
@@ -457,6 +519,7 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
 
             <button
               onClick={handleStartInvestigate}
+              disabled={activeTab === 'VIDEO' && !isDemoPopulated && (!selectedImageFile || !videoValidation || isValidatingVideo)}
               className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-black hover:from-cyan-400 hover:to-blue-500 shadow-[0_0_20px_rgba(6,182,212,0.4)] transition-all cursor-pointer whitespace-nowrap"
             >
               <Search className="h-4 w-4" />
@@ -510,4 +573,3 @@ export const LandingHero: React.FC<LandingHeroProps> = ({
     </div>
   );
 };
-

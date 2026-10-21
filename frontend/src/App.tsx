@@ -22,6 +22,7 @@ import { DEMO_CASE, INITIAL_PIPELINE_STAGES, LIVE_PIPELINE_STAGES } from './data
 import { buildLiveInvestigation } from './data/buildLiveInvestigation';
 import { runInvestigation } from './services/investigationApi';
 import { InvestigationData } from './types/investigation';
+import LandingPage from './landing/LandingPage';
 
 type AppState = 'landing' | 'pipeline' | 'results' | 'shorts';
 
@@ -45,6 +46,7 @@ export default function App() {
   // Modals
   const [isReportOpen, setIsReportOpen] = useState<boolean>(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState<boolean>(false);
+  const isPublicLanding = window.location.pathname.replace(/\/+$/, '') === '';
 
   // Keep the Shorts Analyzer view in sync with browser back/forward and hash links.
   useEffect(() => {
@@ -56,6 +58,10 @@ export default function App() {
       window.removeEventListener('popstate', sync);
     };
   }, []);
+
+  if (isPublicLanding && !wantsShorts()) {
+    return <LandingPage />;
+  }
 
   const handleOpenShorts = () => {
     requestId.current++; // discard any pending investigation result
