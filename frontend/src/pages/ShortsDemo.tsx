@@ -201,6 +201,7 @@ function ShortCard({
 }) {
   const [open, setOpen] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [fallbackVideo, setFallbackVideo] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(true);
@@ -306,6 +307,7 @@ function ShortCard({
 
   const retry = () => {
     setVideoFailed(false);
+    setFallbackVideo(null);
     setLoading(true);
     setPlaying(false);
     setTime(0);
@@ -412,6 +414,7 @@ function ShortCard({
   };
 
   const panelId = `panel-${entry.id}`;
+  const videoSrc = fallbackVideo || resolveVideoSrc(entry.video);
 
   return (
     <section
@@ -427,7 +430,7 @@ function ShortCard({
             key={retryKey}
             ref={videoRef}
             className="absolute inset-0 h-full w-full cursor-pointer object-cover"
-            src={resolveVideoSrc(entry.video)}
+            src={videoSrc}
             muted={muted}
             loop
             playsInline
@@ -435,6 +438,15 @@ function ShortCard({
             aria-label={entry.title}
             onClick={togglePlay}
             onError={() => {
+              // The hosted placeholder clips may be HEVC/H.265, which Chrome
+              // cannot decode. Keep the feed usable with the bundled H.264
+              // preview rather than replacing the card with a blank player.
+              if (!entry.isUploaded && !fallbackVideo) {
+                setFallbackVideo('/hero-loop.mp4');
+                setLoading(true);
+                setPlaying(false);
+                return;
+              }
               setVideoFailed(true);
               setLoading(false);
               setPlaying(false);
