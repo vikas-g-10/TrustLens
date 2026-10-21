@@ -15,6 +15,7 @@ import {
   Search
 } from 'lucide-react';
 import { AnalysisCardData } from '../types/investigation';
+import { TiltCard } from './ui/be-ui-tilt-card';
 
 interface AnalysisCardsGridProps {
   cards: AnalysisCardData[];
@@ -98,12 +99,12 @@ export const AnalysisCardsGrid: React.FC<AnalysisCardsGridProps> = ({
           const isExpanded = expandedCardId === card.id;
 
           return (
-            <div
+            <TiltCard
               key={card.id}
-              className={`rounded-xl border transition-all duration-200 overflow-hidden flex flex-col justify-between ${
+              className={`rounded-2xl border border-border bg-card text-card-foreground shadow-[0_12px_32px_var(--shadow-color)] flex flex-col justify-between ${
                 isExpanded
-                  ? 'border-cyan-500/50 bg-slate-900 shadow-xl'
-                  : 'border-slate-800 bg-slate-900/70 hover:border-slate-700 hover:bg-slate-900/90'
+                  ? 'border-cyan-500/50'
+                  : 'border-border'
               }`}
             >
               {/* Card Header */}
@@ -221,7 +222,7 @@ export const AnalysisCardsGrid: React.FC<AnalysisCardsGridProps> = ({
                   )}
                 </div>
               )}
-            </div>
+            </TiltCard>
           );
         })}
       </div>

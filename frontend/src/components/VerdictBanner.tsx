@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { InvestigationData } from '../types/investigation';
 import { verdictTheme } from '../lib/verdictTheme';
+import { TiltCard } from './ui/be-ui-tilt-card';
 
 interface VerdictBannerProps {
   data: InvestigationData;
@@ -106,7 +107,7 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({
           </div>
 
           {/* Confidence Meter */}
-          <div className="w-full max-w-sm rounded-lg border border-slate-800 bg-slate-950/70 p-3.5 space-y-2">
+          <TiltCard className="w-full max-w-sm rounded-2xl border border-border bg-card p-3.5 space-y-2 shadow-[0_12px_32px_var(--shadow-color)]">
             <div className="flex items-center justify-between text-xs font-mono">
               <span className="text-slate-400">Confidence in assessment:</span>
               <span className={`font-bold tabular-nums text-sm ${theme.confText}`}>
@@ -126,11 +127,11 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({
               <span>Evidence-calibrated</span>
               <span>95% max</span>
             </div>
-          </div>
+          </TiltCard>
 
           {/* Trust Triangle Metrics */}
           {data.trustTriangle && (
-            <div className="w-full max-w-sm rounded-lg border border-slate-800/90 bg-slate-950/80 p-3.5 space-y-2.5">
+            <TiltCard className="w-full max-w-sm rounded-2xl border border-border bg-card p-3.5 space-y-2.5 shadow-[0_12px_32px_var(--shadow-color)]">
               <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 text-xs font-mono">
                 <span className="font-semibold text-cyan-400 flex items-center gap-1.5">
                   <Activity className="h-3.5 w-3.5" />
@@ -184,7 +185,7 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({
                   </div>
                 </div>
               </div>
-            </div>
+            </TiltCard>
           )}
 
           {!data.isDemo && !data.trustTriangle && (
@@ -196,7 +197,7 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({
 
           {/* Evidence Summary Strip */}
           {data.evidenceSummary && (
-            <div className="w-full max-w-sm rounded-lg border border-slate-800/80 bg-slate-950/60 p-3 space-y-2">
+            <TiltCard className="w-full max-w-sm rounded-2xl border border-border bg-card p-3 space-y-2 shadow-[0_12px_32px_var(--shadow-color)]">
               <div className="flex items-center justify-between border-b border-slate-800/70 pb-1 text-[11px] font-mono">
                 <span className="font-semibold text-slate-300 flex items-center gap-1.5">
                   <Scale className="h-3.5 w-3.5 text-cyan-400" />
@@ -224,7 +225,7 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({
                   </span>
                 </div>
               </div>
-            </div>
+            </TiltCard>
           )}
         </div>
 

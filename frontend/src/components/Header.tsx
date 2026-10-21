@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShieldAlert, Compass, FileText, RefreshCw, Film } from 'lucide-react';
+import ThemeToggle from '../theme/ThemeToggle';
 
 interface HeaderProps {
   onReset: () => void;
@@ -85,6 +86,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: Primary Actions */}
         <div className="flex items-center gap-3">
+          <ThemeToggle compact />
           <button
             onClick={onOpenShorts}
             aria-current={isShortsActive ? 'page' : undefined}
