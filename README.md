@@ -6,7 +6,7 @@ TrustLens is an AI-assisted digital evidence investigation prototype designed to
 
 As AI-generated videos, synthetic voices, misleading clips, and edited media become easier to create, it is increasingly difficult to distinguish authentic evidence from content that needs closer inspection. TrustLens explores how multiple evidence signals, explainable reasoning, and visual investigation tools can help people make more informed decisions.
 
-🌐 **Live Demo:** https://trust-lens-kappa-henna.vercel.app/
+🌐 **Live Demo:** https://trust-lens-sigma.vercel.app/
 
 💻 **Source Code:** [GitHub Repository](https://github.com/vikas-g-10/TrustLens)
 
